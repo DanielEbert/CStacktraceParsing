@@ -58,7 +58,7 @@ extern "C"
         int fd = open(crashFilePath, O_CREAT | O_EXCL | O_WRONLY, 0644);
         if (fd == -1)
         {
-            printf("Error: Couldn't create crashing input file %s\n", crashFilePath);
+            fprintf(stderr, "Error: Couldn't create crashing input file %s\n", crashFilePath);
             return;
         }
 
@@ -68,19 +68,8 @@ extern "C"
 
         close(fd);
 
+        // TODO: use this as header to find start of assertion failures and to get assertion reason
         printf("_FUZZING Assertion failed: %s\n", __assertion);
-
-        printf("_FUZZING Stacktrace: [");
-
-        for (int i = 0; i < numberOfFrames; i++)
-        {
-            printf("%p", stacktrace[i]);
-            if (i != numberOfFrames - 1)
-            {
-                printf(", ");
-            }
-        }
-        printf("]\n");
 
         __sanitizer_print_stack_trace();
 
