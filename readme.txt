@@ -16,3 +16,7 @@
 - export UBSAN_OPTIONS=print_summary=1 is important
 
 - add -fsanitize-recover=address
+
+- TODO: need to know reason for error. could write that info also in file TLV encoded
+    - could write that to global var and then read that at breakpoint via gdb
+    - 

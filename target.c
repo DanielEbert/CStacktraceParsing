@@ -4,7 +4,8 @@
 
 int foo(int argc)
 {
-    // assert(argc > 10);
+    assert(argc > 10);
+    return 1;
     volatile int arr = 2147483547;
     // doesnt work: assert(false);
     return arr + 2000;
@@ -12,7 +13,8 @@ int foo(int argc)
 
 int bar(int argc)
 {
-    // assert(argc > 10);
+    assert(argc > 10);
+    return 1;
     volatile int arr = 2147483547;
     // doesnt work: assert(false);
     return arr + 2000;

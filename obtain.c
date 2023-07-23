@@ -19,6 +19,11 @@ extern "C"
     uint64_t FUZZING_numberOfAssertionsFailed = 0;
     uint64_t FUZZING_numberOfSanitizerErrors = 0;
 
+    void __sanitizer_print_stack_trace(void);
+
+    // demangled __sanitizer::Printf(char const*, ...)
+    void _ZN11__sanitizer6PrintfEPKcz(const char* format, ...);
+
     // Based on djb2 hash
     uint64_t fuzz_hash_stacktrace(void** stacktraceBuffer, int numberOfFrames)
     {
@@ -77,6 +82,8 @@ extern "C"
         }
         printf("]\n");
 
+        __sanitizer_print_stack_trace();
+
         printf("Stacktrace hash: %lx\n", stacktraceHash);
     }
 
@@ -118,7 +125,7 @@ extern "C"
         fuzz_on_new_assertion(crashFilePath, __assertion, numberOfFrames, stacktrace, stacktraceHash);
 
         // requires -rdynamic
-        // backtrace_symbols_fd(stacktrace, numberOfFrames, 1);
+        backtrace_symbols_fd(stacktrace, numberOfFrames, 1);
 
         // volatile int i = 1;
         // volatile int j = 2;
@@ -162,9 +169,6 @@ extern "C"
 
         printf("Stacktrace hash: %lx\n", stacktraceHash);
     }
-
-    // demangled __sanitizer::Printf(char const*, ...)
-    void _ZN11__sanitizer6PrintfEPKcz(const char* format, ...);
 
     void __sanitizer_report_error_summary(const char* error_summary)
     {
