@@ -1,0 +1,12 @@
+=================================================================
+==7942==ERROR: AddressSanitizer: stack-buffer-overflow on address 0x7ffcb76eb058 at pc 0x55f97e2b3d3d bp 0x7ffcb76eb020 sp 0x7ffcb76eb010
+READ of size 4 at 0x7ffcb76eb058 thread T0
+    #0 0x55f97e2b3d3c in main /home/user/P/fuzzer/build/asan space.c:4
+    #1 0x7f7670429d8f in __libc_start_call_main ../sysdeps/nptl/libc_start_call_main.h:58
+    #2 0x7f7670429e3f in __libc_start_main_impl ../csu/libc-start.c:392
+    #3 0x55f97e1de3a4 in _start (/home/user/P/fuzzer/build/asan_space+0x93a4)
+
+Address 0x7ffcb76eb058 is located in stack of thread T0 at offset 40 in frame
+    #0 0x55f97e2b3c6d in main /home/user/P/fuzzer/build/asan space.c:2
+
+  This frame has 1 object(s):

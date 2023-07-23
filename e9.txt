@@ -1,0 +1,8 @@
+Accepting input from 'ubsan.c'
+Usage for fuzzing: honggfuzz -P [flags] -- ./ubsan
+ubsan.c:7:5: runtime error: signed integer overflow: 2147483644 + 5 cannot be represented in type 'int'
+    #0 0x556c960d42ad in LLVMFuzzerTestOneInput /home/user/P/fuzzer/build/ubsan.c:7
+    #1 0x556c960de907 in HonggfuzzMain (/home/user/P/fuzzer/build/ubsan+0xea907)
+    #2 0x7f9071e29d8f in __libc_start_call_main ../sysdeps/nptl/libc_start_call_main.h:58
+    #3 0x7f9071e29e3f in __libc_start_main_impl ../csu/libc-start.c:392
+    #4 0x556c95ffe944 in _start (/home/user/P/fuzzer/build/ubsan+0xa944)

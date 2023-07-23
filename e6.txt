@@ -1,0 +1,71 @@
+==1432==ERROR: AddressSanitizer: ABRT on unknown address 0x03e800000598 (pc 0x7f89dd7fbe97 bp 0x7f89dd9747d8 sp 0x7ffca1d565b0 T0)
+    #0 0x7f89dd7fbe96 in __libc_signal_restore_set /build/glibc-OTsEL5/glibc-2.27/signal/../sysdeps/unix/sysv/linux/nptl-signals.h:80
+    #1 0x7f89dd7fbe96 in gsignal /build/glibc-OTsEL5/glibc-2.27/signal/../sysdeps/unix/sysv/linux/raise.c:48
+    #2 0x7f89dd7fd800 in abort /build/glibc-OTsEL5/glibc-2.27/stdlib/abort.c:79
+    #3 0x7f89dd7ed399 in __assert_fail_base /build/glibc-OTsEL5/glibc-2.27/assert/assert.c:92
+    #4 0x7f89dd7ed411 in __assert_fail /build/glibc-OTsEL5/glibc-2.27/assert/assert.c:101
+    #5 0x7f89271653b0  (/usr/lib/x86_64-linux-gnu/dri/swrast_dri.so+0x4d33b0)
+    #6 0x7f8927155584  (/usr/lib/x86_64-linux-gnu/dri/swrast_dri.so+0x4c3584)
+    #7 0x7f8927155c21  (/usr/lib/x86_64-linux-gnu/dri/swrast_dri.so+0x4c3c21)
+    #8 0x7f89271697d6  (/usr/lib/x86_64-linux-gnu/dri/swrast_dri.so+0x4d77d6)
+    #9 0x7f89271758c9  (/usr/lib/x86_64-linux-gnu/dri/swrast_dri.so+0x4e38c9)
+    #10 0x7f8927176220  (/usr/lib/x86_64-linux-gnu/dri/swrast_dri.so+0x4e4220)
+    #11 0x7f8927176583  (/usr/lib/x86_64-linux-gnu/dri/swrast_dri.so+0x4e4583)
+    #12 0x7f89c2c6c33a in fTexStorage3D /builds/worker/workspace/build/src/gfx/gl/GLContext.h:3166:5
+    #13 0x7f89c2c6c33a in DoTexStorage /builds/worker/workspace/build/src/dom/canvas/WebGLTextureUpload.cpp:805
+    #14 0x7f89c2c6c33a in mozilla::WebGLTexture::TexStorage(StrongGLenum<TexTargetDetails>, int, unsigned int, int, int, int) /builds/worker/workspace/build/src/dom/canvas/WebGLTextureUpload.cpp:1101
+    #15 0x7f89c2b34440 in mozilla::WebGL2Context::TexStorage(unsigned char, unsigned int, int, unsigned int, int, int, int) /builds/worker/workspace/build/src/dom/canvas/WebGL2ContextTextures.cpp:22:8
+    #16 0x7f89c1c6b8d1 in TexStorage3D /builds/worker/workspace/build/src/dom/canvas/WebGL2Context.h:108:5
+    #17 0x7f89c1c6b8d1 in mozilla::dom::WebGL2RenderingContext_Binding::texStorage3D(JSContext*, JS::Handle<JSObject*>, mozilla::WebGL2Context*, JSJitMethodCallArgs const&) /builds/worker/workspace/build/src/obj-firefox/dom/bindings/WebGL2RenderingContextBinding.cpp:1895
+    #18 0x7f89c29ada1d in bool mozilla::dom::binding_detail::GenericMethod<mozilla::dom::binding_detail::NormalThisPolicy, mozilla::dom::binding_detail::ThrowExceptions>(JSContext*, unsigned int, JS::Value*) /builds/worker/workspace/build/src/dom/bindings/BindingUtils.cpp:3163:13
+    #19 0x7f89c95ab497 in CallJSNative /builds/worker/workspace/build/src/js/src/vm/Interpreter.cpp:447:13
+    #20 0x7f89c95ab497 in js::InternalCallOrConstruct(JSContext*, JS::CallArgs const&, js::MaybeConstruct) /builds/worker/workspace/build/src/js/src/vm/Interpreter.cpp:539
+    #21 0x7f89c959373c in CallFromStack /builds/worker/workspace/build/src/js/src/vm/Interpreter.cpp:598:10
+    #22 0x7f89c959373c in Interpret(JSContext*, js::RunState&) /builds/worker/workspace/build/src/js/src/vm/Interpreter.cpp:3084
+    #23 0x7f89c9574ddf in js::RunScript(JSContext*, js::RunState&) /builds/worker/workspace/build/src/js/src/vm/Interpreter.cpp:424:10
+    #24 0x7f89c95abf9f in js::InternalCallOrConstruct(JSContext*, JS::CallArgs const&, js::MaybeConstruct) /builds/worker/workspace/build/src/js/src/vm/Interpreter.cpp:567:13
+    #25 0x7f89c95ae1c2 in js::Call(JSContext*, JS::Handle<JS::Value>, JS::Handle<JS::Value>, js::AnyInvokeArgs const&, JS::MutableHandle<JS::Value>) /builds/worker/workspace/build/src/js/src/vm/Interpreter.cpp:610:8
+    #26 0x7f89ca0bc9f8 in JS::Call(JSContext*, JS::Handle<JS::Value>, JS::Handle<JS::Value>, JS::HandleValueArray const&, JS::MutableHandle<JS::Value>) /builds/worker/workspace/build/src/js/src/jsapi.cpp:2722:10
+    #27 0x7f89c2216fc0 in mozilla::dom::EventListener::HandleEvent(JSContext*, JS::Handle<JS::Value>, mozilla::dom::Event&, mozilla::ErrorResult&) /builds/worker/workspace/build/src/obj-firefox/dom/bindings/EventListenerBinding.cpp:52:8
+    #28 0x7f89c313b965 in HandleEvent<mozilla::dom::EventTarget *> /builds/worker/workspace/build/src/obj-firefox/dist/include/mozilla/dom/EventListenerBinding.h:66:12
+    #29 0x7f89c313b965 in mozilla::EventListenerManager::HandleEventSubType(mozilla::EventListenerManager::Listener*, mozilla::dom::Event*, mozilla::dom::EventTarget*) /builds/worker/workspace/build/src/dom/events/EventListenerManager.cpp:1035
+    #30 0x7f89c313d3e0 in mozilla::EventListenerManager::HandleEventInternal(nsPresContext*, mozilla::WidgetEvent*, mozilla::dom::Event**, mozilla::dom::EventTarget*, nsEventStatus*, bool) /builds/worker/workspace/build/src/dom/events/EventListenerManager.cpp:1233:17
+    #31 0x7f89c3123e5a in HandleEvent /builds/worker/workspace/build/src/obj-firefox/dist/include/mozilla/EventListenerManager.h:353:5
+    #32 0x7f89c3123e5a in mozilla::EventTargetChainItem::HandleEvent(mozilla::EventChainPostVisitor&, mozilla::ELMCreationDetector&) /builds/worker/workspace/build/src/dom/events/EventDispatcher.cpp:349
+    #33 0x7f89c3122672 in mozilla::EventTargetChainItem::HandleEventTargetChain(nsTArray<mozilla::EventTargetChainItem>&, mozilla::EventChainPostVisitor&, mozilla::EventDispatchingCallback*, mozilla::ELMCreationDetector&) /builds/worker/workspace/build/src/dom/events/EventDispatcher.cpp:551:16
+    #34 0x7f89c312803b in mozilla::EventDispatcher::Dispatch(nsISupports*, nsPresContext*, mozilla::WidgetEvent*, mozilla::dom::Event*, nsEventStatus*, mozilla::EventDispatchingCallback*, nsTArray<mozilla::dom::EventTarget*>*) /builds/worker/workspace/build/src/dom/events/EventDispatcher.cpp:1047:11
+    #35 0x7f89c5aed654 in nsDocumentViewer::LoadComplete(nsresult) /builds/worker/workspace/build/src/layout/base/nsDocumentViewer.cpp:1169:7
+    #36 0x7f89c8733729 in nsDocShell::EndPageLoad(nsIWebProgress*, nsIChannel*, nsresult) /builds/worker/workspace/build/src/docshell/base/nsDocShell.cpp:6518:20
+    #37 0x7f89c87329ce in nsDocShell::OnStateChange(nsIWebProgress*, nsIRequest*, unsigned int, nsresult) /builds/worker/workspace/build/src/docshell/base/nsDocShell.cpp:6318:7
+    #38 0x7f89c873751f in non-virtual thunk to nsDocShell::OnStateChange(nsIWebProgress*, nsIRequest*, unsigned int, nsresult) /builds/worker/workspace/build/src/docshell/base/nsDocShell.cpp
+    #39 0x7f89bea29c4c in nsDocLoader::DoFireOnStateChange(nsIWebProgress*, nsIRequest*, int&, nsresult) /builds/worker/workspace/build/src/uriloader/base/nsDocLoader.cpp:1336:3
+    #40 0x7f89bea28cec in nsDocLoader::doStopDocumentLoad(nsIRequest*, nsresult) /builds/worker/workspace/build/src/uriloader/base/nsDocLoader.cpp:895:14
+    #41 0x7f89bea248ab in nsDocLoader::DocLoaderIsEmpty(bool) /builds/worker/workspace/build/src/uriloader/base/nsDocLoader.cpp:729:9
+    #42 0x7f89bea27766 in nsDocLoader::OnStopRequest(nsIRequest*, nsresult) /builds/worker/workspace/build/src/uriloader/base/nsDocLoader.cpp:617:5
+    #43 0x7f89bea288cc in non-virtual thunk to nsDocLoader::OnStopRequest(nsIRequest*, nsresult) /builds/worker/workspace/build/src/uriloader/base/nsDocLoader.cpp
+    #44 0x7f89bc296de0 in mozilla::net::nsLoadGroup::RemoveRequest(nsIRequest*, nsISupports*, nsresult) /builds/worker/workspace/build/src/netwerk/base/nsLoadGroup.cpp:568:22
+    #45 0x7f89c00cc0d8 in DoUnblockOnload /builds/worker/workspace/build/src/dom/base/Document.cpp:10674:18
+    #46 0x7f89c00cc0d8 in mozilla::dom::Document::UnblockOnload(bool) /builds/worker/workspace/build/src/dom/base/Document.cpp:10606
+    #47 0x7f89c00f7bf4 in mozilla::dom::Document::DispatchContentLoadedEvents() /builds/worker/workspace/build/src/dom/base/Document.cpp:7168:3
+    #48 0x7f89c01de164 in applyImpl<mozilla::dom::Document, void (mozilla::dom::Document::*)()> /builds/worker/workspace/build/src/obj-firefox/dist/include/nsThreadUtils.h:1124:12
+    #49 0x7f89c01de164 in apply<mozilla::dom::Document, void (mozilla::dom::Document::*)()> /builds/worker/workspace/build/src/obj-firefox/dist/include/nsThreadUtils.h:1130
+    #50 0x7f89c01de164 in mozilla::detail::RunnableMethodImpl<mozilla::dom::Document*, void (mozilla::dom::Document::*)(), true, (mozilla::RunnableKind)0>::Run() /builds/worker/workspace/build/src/obj-firefox/dist/include/nsThreadUtils.h:1176
+    #51 0x7f89bbfb45c1 in mozilla::SchedulerGroup::Runnable::Run() /builds/worker/workspace/build/src/xpcom/threads/SchedulerGroup.cpp:295:32
+    #52 0x7f89bbfe6510 in nsThread::ProcessNextEvent(bool, bool*) /builds/worker/workspace/build/src/xpcom/threads/nsThread.cpp:1225:14
+    #53 0x7f89bbfec558 in NS_ProcessNextEvent(nsIThread*, bool) /builds/worker/workspace/build/src/xpcom/threads/nsThreadUtils.cpp:486:10
+    #54 0x7f89bd1e9edf in mozilla::ipc::MessagePump::Run(base::MessagePump::Delegate*) /builds/worker/workspace/build/src/ipc/glue/MessagePump.cpp:88:21
+    #55 0x7f89bd0e50b2 in RunInternal /builds/worker/workspace/build/src/ipc/chromium/src/base/message_loop.cc:315:10
+    #56 0x7f89bd0e50b2 in RunHandler /builds/worker/workspace/build/src/ipc/chromium/src/base/message_loop.cc:308
+    #57 0x7f89bd0e50b2 in MessageLoop::Run() /builds/worker/workspace/build/src/ipc/chromium/src/base/message_loop.cc:290
+    #58 0x7f89c53f5799 in nsBaseAppShell::Run() /builds/worker/workspace/build/src/widget/nsBaseAppShell.cpp:137:27
+    #59 0x7f89c92f33bf in XRE_RunAppShell() /builds/worker/workspace/build/src/toolkit/xre/nsEmbedFunctions.cpp:934:20
+    #60 0x7f89bd0e50b2 in RunInternal /builds/worker/workspace/build/src/ipc/chromium/src/base/message_loop.cc:315:10
+    #61 0x7f89bd0e50b2 in RunHandler /builds/worker/workspace/build/src/ipc/chromium/src/base/message_loop.cc:308
+    #62 0x7f89bd0e50b2 in MessageLoop::Run() /builds/worker/workspace/build/src/ipc/chromium/src/base/message_loop.cc:290
+    #63 0x7f89c92f2c66 in XRE_InitChildProcess(int, char**, XREChildData const*) /builds/worker/workspace/build/src/toolkit/xre/nsEmbedFunctions.cpp:769:34
+    #64 0x556a19cddd73 in content_process_main /builds/worker/workspace/build/src/browser/app/../../ipc/contentproc/plugin-container.cpp:56:28
+    #65 0x556a19cddd73 in main /builds/worker/workspace/build/src/browser/app/nsBrowserApp.cpp:267
+    #66 0x7f89dd7deb96 in __libc_start_main /build/glibc-OTsEL5/glibc-2.27/csu/../csu/libc-start.c:310
+
+AddressSanitizer can not provide additional info.
+SUMMARY: AddressSanitizer: ABRT /build/glibc-OTsEL5/glibc-2.27/signal/../sysdeps/unix/sysv/linux/nptl-signals.h:80 in __libc_signal_restore_set

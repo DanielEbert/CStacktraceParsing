@@ -1,0 +1,13 @@
+=================================================================
+==7849==ERROR: AddressSanitizer: stack-buffer-overflow on address 0x7fff385c4528 at pc 0x55b44fb31d7c bp 0x7fff385c44e0 sp 0x7fff385c44d0
+READ of size 4 at 0x7fff385c4528 thread T0
+    #0 0x55b44fb31d7b in int getN<int>(int) /home/user/P/fuzzer/build/asan_temp.cpp:5
+    #1 0x55b44fb31c6f in main /home/user/P/fuzzer/build/asan_temp.cpp:10
+    #2 0x7f5712029d8f in __libc_start_call_main ../sysdeps/nptl/libc_start_call_main.h:58
+    #3 0x7f5712029e3f in __libc_start_main_impl ../csu/libc-start.c:392
+    #4 0x55b44fa5c3a4 in _start (/home/user/P/fuzzer/build/asan_temp+0x93a4)
+
+Address 0x7fff385c4528 is located in stack of thread T0 at offset 40 in frame
+    #0 0x55b44fb31c96 in int getN<int>(int) /home/user/P/fuzzer/build/asan_temp.cpp:2
+
+  This frame has 1 object(s):
