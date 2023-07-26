@@ -69,7 +69,7 @@ extern "C"
         close(fd);
 
         // TODO: use this as header to find start of assertion failures and to get assertion reason
-        printf("_FUZZING Assertion failed: %s\n", __assertion);
+        printf("\n_FUZZING Assertion failed: %s\n", __assertion);
 
         __sanitizer_print_stack_trace();
 

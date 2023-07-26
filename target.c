@@ -37,7 +37,7 @@ int main(int argc, char *argv[])
         }
 
         foo(argc);
-        // bar(argc);
+        bar(argc);
 
         if (FUZZING_foundCrash)
         {
