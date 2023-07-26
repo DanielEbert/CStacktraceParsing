@@ -7,10 +7,11 @@ extern char FUZZING_crashFilePath[1024];
 
 int foo(int argc)
 {
-    assert(argc > 10);
-    return 1;
+    // assert(argc > 10);
+    // return 1;
     volatile int arr = 2147483547;
     // doesnt work: assert(false);
+    // assert(false);
     return arr + 2000;
 }
 
@@ -36,11 +37,11 @@ int main(int argc, char *argv[])
         }
 
         foo(argc);
-        bar(argc);
+        // bar(argc);
 
         if (FUZZING_foundCrash)
         {
-            printf("FOUND CRASH %s\n", FUZZING_crashFilePath);
+            printf("FOUND CRASH\n"); // %s\n", FUZZING_crashFilePath);
         }
     }
     return 1;

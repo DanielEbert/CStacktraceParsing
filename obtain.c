@@ -14,14 +14,12 @@ extern "C"
 // TODO: remove
 #include <assert.h>
 
-    // obtain.c should set some global var, which is read from LLVMFuzzerTestOneInput(). bool and filename (hash) I assume
+    // If an assertion or sanitizer error is found, FUZZING_foundCrash is set to true
+    bool FUZZING_foundCrash = false;
 
     char *FUZZING_crashingInputsDir = NULL;
-
     uint64_t FUZZING_numberOfAssertionsFailed = 0;
     uint64_t FUZZING_numberOfSanitizerErrors = 0;
-
-    bool FUZZING_foundCrash = false;
     char FUZZING_crashFilePath[1024];
 
     void __sanitizer_print_stack_trace(void);
@@ -44,15 +42,17 @@ extern "C"
 
     void fuzzing_init_wrapper()
     {
+        if (FUZZING_crashingInputsDir != NULL)
+        {
+            return;
+        }
+
+        FUZZING_crashingInputsDir = getenv("FUZZING_crashingInputsDir");
+
         if (FUZZING_crashingInputsDir == NULL)
         {
-            FUZZING_crashingInputsDir = getenv("FUZZING_crashingInputsDir");
-
-            if (FUZZING_crashingInputsDir == NULL)
-            {
-                write(1, "No environment variable FUZZING_crashingInputsDir set. Using default /tmp.\n", 76);
-                FUZZING_crashingInputsDir = (char *)"/tmp";
-            }
+            write(1, "No environment variable FUZZING_crashingInputsDir set. Using default /tmp.\n", 76);
+            FUZZING_crashingInputsDir = (char *)"/tmp";
         }
     }
 
@@ -65,10 +65,6 @@ extern "C"
             fprintf(stderr, "Error: Couldn't create crashing input file %s\n", crashFilePath);
             return;
         }
-
-        // TODO: in while loop and check returned value
-        // TODO: write actual fuzzer inp value, use for dedup later
-        write(fd, "123", 3);
 
         close(fd);
 
@@ -139,28 +135,23 @@ extern "C"
             return;
         }
 
-        // TODO: in while loop and check returned value
-        // TODO: write actual fuzzer inp value, use for dedup later
-        // TODO: probably I dont even want to write real input here. just create file for dedup
-        write(fd, "456", 3);
-
         close(fd);
 
-        printf("_FUZZING SanitizerError\n");
+        // printf("_FUZZING SanitizerError\n");
 
-        printf("_FUZZING Stacktrace: [");
+        // printf("_FUZZING Stacktrace: [");
 
-        for (int i = 0; i < numberOfFrames; i++)
-        {
-            printf("%p", stacktrace[i]);
-            if (i != numberOfFrames - 1)
-            {
-                printf(", ");
-            }
-        }
-        printf("]\n");
+        // for (int i = 0; i < numberOfFrames; i++)
+        // {
+        //     printf("%p", stacktrace[i]);
+        //     if (i != numberOfFrames - 1)
+        //     {
+        //         printf(", ");
+        //     }
+        // }
+        // printf("]\n");
 
-        printf("Stacktrace hash: %lx\n", stacktraceHash);
+        // printf("Stacktrace hash: %lx\n", stacktraceHash);
 
         FUZZING_foundCrash = true;
     }
