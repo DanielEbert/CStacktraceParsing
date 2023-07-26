@@ -14,18 +14,23 @@ extern "C"
 // TODO: remove
 #include <assert.h>
 
-    char* FUZZING_crashingInputsDir = NULL;
+    // obtain.c should set some global var, which is read from LLVMFuzzerTestOneInput(). bool and filename (hash) I assume
+
+    char *FUZZING_crashingInputsDir = NULL;
 
     uint64_t FUZZING_numberOfAssertionsFailed = 0;
     uint64_t FUZZING_numberOfSanitizerErrors = 0;
 
+    bool FUZZING_foundCrash = false;
+    char FUZZING_crashFilePath[1024];
+
     void __sanitizer_print_stack_trace(void);
 
     // demangled __sanitizer::Printf(char const*, ...)
-    void _ZN11__sanitizer6PrintfEPKcz(const char* format, ...);
+    void _ZN11__sanitizer6PrintfEPKcz(const char *format, ...);
 
     // Based on djb2 hash
-    uint64_t fuzz_hash_stacktrace(void** stacktraceBuffer, int numberOfFrames)
+    uint64_t fuzzing_hash_stacktrace(void **stacktraceBuffer, int numberOfFrames)
     {
         uint64_t hash = 5381;
 
@@ -37,7 +42,7 @@ extern "C"
         return hash;
     }
 
-    void fuzz_init_wrapper()
+    void fuzzing_init_wrapper()
     {
         if (FUZZING_crashingInputsDir == NULL)
         {
@@ -46,14 +51,13 @@ extern "C"
             if (FUZZING_crashingInputsDir == NULL)
             {
                 write(1, "No environment variable FUZZING_crashingInputsDir set. Using default /tmp.\n", 76);
-                FUZZING_crashingInputsDir = (char*)"/tmp";
+                FUZZING_crashingInputsDir = (char *)"/tmp";
             }
         }
     }
 
-    // noinline because we break here with GDB
-    void __attribute__((noinline)) fuzz_on_new_assertion(char* crashFilePath, const char* __assertion,
-                                                         int numberOfFrames, void** stacktrace, uint64_t stacktraceHash)
+    void fuzzing_on_new_assertion(char *crashFilePath, const char *__assertion,
+                                  int numberOfFrames, void **stacktrace, uint64_t stacktraceHash)
     {
         int fd = open(crashFilePath, O_CREAT | O_EXCL | O_WRONLY, 0644);
         if (fd == -1)
@@ -74,9 +78,11 @@ extern "C"
         __sanitizer_print_stack_trace();
 
         printf("Stacktrace hash: %lx\n", stacktraceHash);
+
+        FUZZING_foundCrash = true;
     }
 
-    void __wrap___assert_fail(const char* __assertion, const char* __file, unsigned int __line, const char* __function)
+    void __wrap___assert_fail(const char *__assertion, const char *__file, unsigned int __line, const char *__function)
     {
         static bool doubleAssertCalled = false;
         if (doubleAssertCalled)
@@ -85,36 +91,35 @@ extern "C"
         }
         doubleAssertCalled = true;
 
-        fuzz_init_wrapper();
+        fuzzing_init_wrapper();
 
         FUZZING_numberOfAssertionsFailed++;
 
         int stacktraceBufferSize = 256;
-        void* stacktrace[stacktraceBufferSize];
+        void *stacktrace[stacktraceBufferSize];
 
         int numberOfFrames = backtrace(stacktrace, stacktraceBufferSize);
 
-        uint64_t stacktraceHash = fuzz_hash_stacktrace(stacktrace, numberOfFrames);
+        uint64_t stacktraceHash = fuzzing_hash_stacktrace(stacktrace, numberOfFrames);
 
-        char crashFilePath[1024];
-        snprintf(crashFilePath, 1024, "%s/assert_%lx", FUZZING_crashingInputsDir, stacktraceHash);
+        snprintf(FUZZING_crashFilePath, 1024, "%s/assert_%lx", FUZZING_crashingInputsDir, stacktraceHash);
 
-        if (access(crashFilePath, F_OK) != -1)
+        if (access(FUZZING_crashFilePath, F_OK) != -1)
         {
             // crashFilePath exists already
             if (FUZZING_numberOfAssertionsFailed % 100000 == 1)
             {
-                printf("Stacktrace hash observed previously %s\n", crashFilePath);
+                printf("Stacktrace hash observed previously %s\n", FUZZING_crashFilePath);
                 printf("Assertion count: %ld\n", FUZZING_numberOfAssertionsFailed);
             }
             doubleAssertCalled = false;
             return;
         }
 
-        fuzz_on_new_assertion(crashFilePath, __assertion, numberOfFrames, stacktrace, stacktraceHash);
+        fuzzing_on_new_assertion(FUZZING_crashFilePath, __assertion, numberOfFrames, stacktrace, stacktraceHash);
 
         // requires -rdynamic
-        backtrace_symbols_fd(stacktrace, numberOfFrames, 1);
+        // backtrace_symbols_fd(stacktrace, numberOfFrames, 1);
 
         // volatile int i = 1;
         // volatile int j = 2;
@@ -125,9 +130,7 @@ extern "C"
         return;
     }
 
-    // noinline because we break here with GDB
-    void __attribute__((noinline))
-    fuzz_on_new_sanitizer_error(char* crashFilePath, int numberOfFrames, void** stacktrace, uint64_t stacktraceHash)
+    void fuzzing_on_new_sanitizer_error(char *crashFilePath, int numberOfFrames, void **stacktrace, uint64_t stacktraceHash)
     {
         int fd = open(crashFilePath, O_CREAT | O_EXCL | O_WRONLY, 0644);
         if (fd == -1)
@@ -138,6 +141,7 @@ extern "C"
 
         // TODO: in while loop and check returned value
         // TODO: write actual fuzzer inp value, use for dedup later
+        // TODO: probably I dont even want to write real input here. just create file for dedup
         write(fd, "456", 3);
 
         close(fd);
@@ -157,9 +161,11 @@ extern "C"
         printf("]\n");
 
         printf("Stacktrace hash: %lx\n", stacktraceHash);
+
+        FUZZING_foundCrash = true;
     }
 
-    void __sanitizer_report_error_summary(const char* error_summary)
+    void __sanitizer_report_error_summary(const char *error_summary)
     {
         _ZN11__sanitizer6PrintfEPKcz(error_summary);
 
@@ -170,33 +176,32 @@ extern "C"
         }
         doubleSANCalled = true;
 
-        fuzz_init_wrapper();
+        fuzzing_init_wrapper();
 
         FUZZING_numberOfSanitizerErrors++;
 
         int stacktraceBufferSize = 256;
-        void* stacktrace[stacktraceBufferSize];
+        void *stacktrace[stacktraceBufferSize];
 
         int numberOfFrames = backtrace(stacktrace, stacktraceBufferSize);
 
-        uint64_t stacktraceHash = fuzz_hash_stacktrace(stacktrace, numberOfFrames);
+        uint64_t stacktraceHash = fuzzing_hash_stacktrace(stacktrace, numberOfFrames);
 
-        char crashFilePath[1024];
-        snprintf(crashFilePath, 1024, "%s/sanitizer_%lx", FUZZING_crashingInputsDir, stacktraceHash);
+        snprintf(FUZZING_crashFilePath, 1024, "%s/sanitizer_%lx", FUZZING_crashingInputsDir, stacktraceHash);
 
-        if (access(crashFilePath, F_OK) != -1)
+        if (access(FUZZING_crashFilePath, F_OK) != -1)
         {
             // crashFilePath exists already
             if (FUZZING_numberOfSanitizerErrors % 1000 == 1)
             {
-                printf("Stacktrace hash observed previously %s\n", crashFilePath);
+                printf("Stacktrace hash observed previously %s\n", FUZZING_crashFilePath);
                 printf("Sanitizer error count: %ld\n", FUZZING_numberOfSanitizerErrors);
             }
             doubleSANCalled = false;
             return;
         }
 
-        fuzz_on_new_sanitizer_error(crashFilePath, numberOfFrames, stacktrace, stacktraceHash);
+        fuzzing_on_new_sanitizer_error(FUZZING_crashFilePath, numberOfFrames, stacktrace, stacktraceHash);
 
         doubleSANCalled = false;
     }
